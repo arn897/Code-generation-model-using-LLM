@@ -2,15 +2,25 @@ Code Generation Model Using LLM
 A deep learning project that fine-tunes a Large Language Model (LLM) for generating Python code snippets based on user prompts. This project demonstrates how to train, fine-tune, and deploy a code generation model using the Hugging Face Transformers library and PyTorch.
 
 Table of Content:
+
 Project Overview
+
 Features
+
 Installation
+
 Usage
+
 Model Training
+
 Generating Code
+
 Demo
+
 Technologies Used
+
 Contributing
+
 License
 
 
