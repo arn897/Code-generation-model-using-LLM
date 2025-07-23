@@ -1,165 +1,114 @@
-Code Generation Model Using LLM
-A deep learning project that fine-tunes a Large Language Model (LLM) for generating Python code snippets based on user prompts. This project demonstrates how to train, fine-tune, and deploy a code generation model using the Hugging Face Transformers library and PyTorch.
+# 🚀 Code Generation Model using LLM (Fine-Tuned CodeGen)
 
-Table of Content:
+Transforming natural language into working Python code using a fine-tuned Large Language Model (LLM). This project showcases how you can build a code generator that accepts prompts like _"Write a binary search function"_ and returns clean, executable Python code. 🧠💻
 
-Project Overview
+---
 
-Features
+## 📌 Project Highlights
 
-Installation
+- 🤖 Fine-tuned `Salesforce/codegen-350M-multi` using Hugging Face Transformers  
+- 🧑‍💻 Generates Python functions from user-written prompts  
+- ⚡ GPU-accelerated training and inference  
+- 📦 Works in notebooks or scripts for easy integration  
+- 🔁 Uses sampling methods like `top_k`, `top_p` for diverse generations  
 
-Usage
+---
 
-Model Training
+## 📂 Folder Structure
 
-Generating Code
+├── data/ # Your dataset
+├── results/ # Checkpoints after training
+├── CodeGenLLM.ipynb # Training and inference notebook
+├── generate.py # Script to generate code from prompt
+├── README.md
+└── requirements.txt
 
-Demo
+---
 
-Technologies Used
-
-Contributing
-
-License
+## 🔧 Setup Instructions
 
 
+# 1. Clone the repository
+git clone https://github.com/arn897/Code-generation-model-using-llm.git
+cd code-generation-llm
 
-Project Overview
-This project fine-tunes a transformer-based Large Language Model (CodeGen) to generate Python code snippets. Given a user prompt describing a function or algorithm, the model produces relevant and syntactically correct Python code. The model is trained on custom datasets and can generate code for a variety of algorithms.
-
-Features
-Fine-tuning of pre-trained CodeGen model
-
-Generation of Python functions based on text prompts
-
-Support for custom prompts and max generation length
-
-GPU acceleration for faster training and inference
-
-Sample scripts for testing and evaluation
-
-Installation
-Make sure you have Python 3.8+ installed.
-
-Clone the repo:
-
-bash
-
-Copy
-
-Edit
-
-git clone https://github.com/arn897/Code-generation-model-using-LLM.git
-
-cd Code-generation-model-using-LLM
-
-Create a virtual environment (optional but recommended):
-
-bash
-
-Copy
-
-Edit
-
+# 2. (Optional) Create and activate virtual environment
 python -m venv venv
+source venv/bin/activate  # or venv\Scripts\activate on Windows
 
-source venv/bin/activate  # Linux/Mac
-
-venv\Scripts\activate     # Windows
-
-Install dependencies:
-
-bash
-
-Copy
-
-Edit
-
+# 3. Install dependencies
 pip install -r requirements.txt
 
-Usage
 
-Loading the fine-tuned model and generating code
-
-python
-
-Copy
-
-Edit
-
+💡 How to Use
 import torch
-
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
-model_path = "./results/checkpoint-438"  # Path to fine-tuned checkpoint
+model_path = "./results/checkpoint-438"  # Path to saved model
 
 tokenizer = AutoTokenizer.from_pretrained(model_path)
+model = AutoModelForCausalLM.from_pretrained(model_path).to("cuda")
 
-model = AutoModelForCausalLM.from_pretrained(model_path)
-
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-model.to(device)
-
-def generate_code(prompt, max_length=350):
-
-    inputs = tokenizer(prompt, return_tensors="pt").to(device)
-    
+def generate_code(prompt, max_length=300):
+    inputs = tokenizer(prompt, return_tensors="pt").to("cuda")
     outputs = model.generate(
-        inputs["input_ids"],
-        attention_mask=inputs["attention_mask"],
-        
+        **inputs,
         max_length=max_length,
-        
-        pad_token_id=tokenizer.eos_token_id,
-        
         do_sample=True,
+        temperature=0.7,
         top_k=50,
         top_p=0.95,
-        temperature=0.7,
-        num_return_sequences=1
+        pad_token_id=tokenizer.eos_token_id
     )
-    
-    generated = tokenizer.decode(outputs[0], skip_special_tokens=True)
-    
-    return generated[len(prompt):].strip() if generated.startswith(prompt) else generated
+    return tokenizer.decode(outputs[0], skip_special_tokens=True)
 
-prompt = "def quick_sort(arr):"
+# Example
+print(generate_code("def quick_sort(arr):"))
 
-print(generate_code(prompt))
-
-Model Training
-
-To fine-tune the model on your custom dataset, use the training scripts with Hugging Face's Trainer API. Ensure you have GPU support enabled.
-
-Demo
-
-You can interactively generate code by running:
+📊 Demo Output
+Prompt:
 
 python
-
 Copy
-
 Edit
+def binary_search(arr, target):
+Generated Output:
 
-prompt = input("Enter your code prompt: ")
+python
+Copy
+Edit
+def binary_search(arr, target):
+    left, right = 0, len(arr) - 1
+    while left <= right:
+        mid = (left + right) // 2
+        if arr[mid] == target:
+            return mid
+        elif arr[mid] < target:
+            left = mid + 1
+        else:
+            right = mid - 1
+    return -1
 
-print(generate_code(prompt))
+🧠 Model Info
 
-Technologies Used
+Base Model: Salesforce/codegen-350M-multi
 
-Python 3.8+
+Trained On: Custom prompts + Python code samples
 
-PyTorch
+Checkpoint Used: checkpoint-438
 
-Hugging Face Transformers
+Framework: PyTorch + Hugging Face Transformers
 
-CUDA (for GPU acceleration)
+📌 Technologies
 
-Kaggle (for notebook environment)
+Python 🐍
 
-Contributing
+Hugging Face 🤗
 
-Contributions are welcome! Feel free to open issues or submit pull requests.
+PyTorch 🔥
+
+Jupyter Notebooks 📓
+
+CUDA (for GPU acceleration) 🖥️
+
 
